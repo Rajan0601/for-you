@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For Pratiksha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Nunito+Sans:wght@400;600;700&family=Parisienne&display=swap" rel="stylesheet">
+<style>
+  /* Layout idea: one narrow column, like a letter unfolding downward, ending in a wide open "arena" for the question. Single theme by choice. */
+  :root {
+    color-scheme: light;
+    --cream: #FFF8F1;
+    --blush: #FBDDE6;
+    --lilac: #E3D6F7;
+    --rose: #C94F74;
+    --rose-deep: #A83A5E;
+    --plum: #47294F;
+    --plum-soft: #7A5C82;
+    --gold: #C7A257;
+    --paper: #FFFDFA;
+    --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+    --body: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+    --script: "Parisienne", "Snell Roundhand", "Brush Script MT", cursive;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--body);
+    color: var(--plum);
+    background: linear-gradient(180deg, var(--cream) 0%, var(--blush) 45%, var(--lilac) 100%) var(--cream);
+    background-attachment: fixed;
+    line-height: 1.7;
+    font-size: 17px;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2 { font-family: var(--display); font-weight: 600; text-wrap: balance; margin: 0; line-height: 1.1; }
+  p { margin: 0; }
+  button { font-family: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  /* progress */
+  .progress { position: fixed; inset: 0 0 auto 0; height: 4px; background: rgba(255,255,255,.6); z-index: 20; }
+  .progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--rose)); border-radius: 0 4px 4px 0; position: relative; }
+  .progress-fill::after { content: "♥"; position: absolute; right: -8px; top: -5px; font-size: 16px; color: var(--rose); }
+
+  /* floating hearts */
+  .sky { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .sky span { position: absolute; bottom: -40px; color: var(--rose); opacity: 0; animation: rise linear infinite; }
+  @keyframes rise {
+    0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+    10% { opacity: .35; }
+    90% { opacity: .25; }
+    100% { transform: translateY(-110vh) translateX(var(--drift)) rotate(25deg); opacity: 0; }
+  }
+
+  main { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 72px; padding: 56px 20px 96px; max-width: 640px; margin: 0 auto; }
+  main { min-height: 100vh; min-height: 100svh; justify-content: center; }
+  section { display: none; flex-direction: column; gap: 20px; }
+  section.active { display: flex; animation: fadein .8s ease both; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  .nav { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; margin-top: 8px; }
+  .back { background: none; border: 0; color: var(--plum-soft); font-size: 15px; font-weight: 600; padding: 12px 14px; text-decoration: underline; }
+  .progress-fill { transition: width .6s ease; }
+  .eyebrow { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--plum-soft); font-weight: 700; }
+
+  /* opening */
+  .hello { text-align: center; align-items: center; padding-top: 32px; }
+  .hello h1 { font-size: clamp(44px, 12vw, 76px); font-style: italic; color: var(--rose-deep); }
+  .hello .lede { font-size: 19px; max-width: 30em; color: var(--plum); }
+  .note { font-size: 14px; color: var(--plum-soft); font-style: italic; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .btn { border: 0; border-radius: 999px; padding: 14px 26px; font-size: 16px; font-weight: 700; text-decoration: none; display: inline-block; }
+  .btn-primary { background: var(--rose); color: #fff; box-shadow: 0 8px 22px rgba(201,79,116,.35); }
+  .btn-primary:hover { background: var(--rose-deep); }
+  .btn-ghost { background: rgba(255,255,255,.75); color: var(--plum); border: 1.5px solid var(--gold); }
+
+  /* story */
+  .story h2 { font-size: clamp(30px, 7vw, 42px); }
+  .story .quote { font-family: var(--display); font-style: italic; font-size: clamp(22px, 5.4vw, 28px); line-height: 1.35; color: var(--rose-deep); border-left: 3px solid var(--gold); padding-left: 18px; }
+  .places { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; background: rgba(255,255,255,.7); border-radius: 22px; padding: 20px 16px; text-align: center; }
+  .place b { display: block; font-family: var(--display); font-size: 24px; font-weight: 600; }
+  .place .time { font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 700; color: var(--rose-deep); }
+  .place small { color: var(--plum-soft); font-size: 13px; }
+  .thread { color: var(--gold); font-size: 22px; letter-spacing: 2px; white-space: nowrap; }
+  .days { text-align: center; }
+  .days strong { font-family: var(--display); font-size: 56px; line-height: 1; color: var(--rose-deep); font-variant-numeric: tabular-nums; display: block; }
+
+  /* letter */
+  .letter { background: var(--paper); border-radius: 6px 26px 6px 26px; padding: 34px 26px; box-shadow: 0 18px 50px rgba(71,41,79,.14); border-top: 4px solid var(--gold); gap: 16px; }
+  .letter h2 { font-size: 34px; font-style: italic; color: var(--rose-deep); }
+  .letter p { max-width: 34em; }
+  .sign { font-family: var(--script); font-size: 34px; color: var(--rose-deep); line-height: 1.2; margin-top: 8px; }
+  .to { font-size: 14px; color: var(--plum-soft); }
+
+  /* question */
+  .ask { text-align: center; align-items: center; }
+  .ask h2 { font-size: clamp(40px, 11vw, 68px); font-style: italic; color: var(--rose-deep); }
+  .arena { position: relative; width: 100%; min-height: 300px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 22px; background: rgba(255,255,255,.55); border: 1.5px dashed var(--gold); border-radius: 28px; padding: 24px; touch-action: manipulation; }
+  #yes { font-size: 24px; padding: 20px 52px; transition: transform .35s cubic-bezier(.3,1.6,.5,1); animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 8px 22px rgba(201,79,116,.35); } 50% { box-shadow: 0 8px 22px rgba(201,79,116,.35), 0 0 0 14px rgba(201,79,116,.12); } }
+  #no { background: #fff; color: var(--plum-soft); border: 1.5px solid var(--lilac); padding: 12px 22px; font-size: 15px; transition: left .32s cubic-bezier(.2,.9,.3,1.3), top .32s cubic-bezier(.2,.9,.3,1.3), transform .32s ease; white-space: nowrap; }
+  .tease { min-height: 1.7em; color: var(--plum-soft); font-style: italic; }
+
+  /* yes */
+  .yay { text-align: center; align-items: center; background: var(--paper); border-radius: 28px; padding: 44px 24px; box-shadow: 0 18px 50px rgba(71,41,79,.16); border: 2px solid var(--gold); animation: pop .7s cubic-bezier(.3,1.5,.5,1); }
+  .yay h2 { font-size: clamp(40px, 11vw, 64px); font-style: italic; color: var(--rose-deep); }
+  .yay .big { font-size: 20px; max-width: 26em; }
+  .hearts-row { font-size: 30px; color: var(--rose); letter-spacing: 10px; }
+  @keyframes pop { from { transform: scale(.8); opacity: 0; } to { transform: none; opacity: 1; } }
+  #confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 15; }
+
+  @media (max-width: 420px) {
+    main { gap: 56px; padding-top: 44px; }
+    .letter { padding: 28px 20px; }
+    .thread { font-size: 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .sky { display: none; }
+    #yes, .yay, section.active { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="bar"></div></div>
+<div class="sky" id="sky" aria-hidden="true"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<main>
+  <section class="hello active" id="hello">
+    <p class="eyebrow">London → India</p>
+    <h1>Hi, Pratiksha</h1>
+    <p class="lede">I made this little page just for you, from 4,000-something miles away. Take your time. I have a question for you at the end.</p>
+    <div class="row">
+      <button class="btn btn-primary" type="button" data-go="1">Begin ♥</button>
+      <button class="btn btn-ghost" id="music" type="button" aria-pressed="false">♪ Play soft music</button>
+    </div>
+    <p class="note">It’s me, your guy in London, who fell for you all the way in India.</p>
+  </section>
+
+  <section class="story" id="story">
+    <p class="eyebrow">Our story so far</p>
+    <h2>It started with a hello</h2>
+    <p class="quote">From 2nd August 2026… two people, two countries, one connection that only grew stronger.</p>
+    <div class="places">
+      <div class="place"><b>London</b><span class="time" id="t-lon">--:--</span><br><small>where I am</small></div>
+      <div class="thread">· · ♥ · ·</div>
+      <div class="place"><b>India</b><span class="time" id="t-ind">--:--</span><br><small>where my heart is</small></div>
+    </div>
+    <p>The clocks never agree. When I say good night, you are already deep in tomorrow. Somehow we kept finding each other anyway, between your mornings and my late nights, one message at a time.</p>
+    <p class="days"><strong id="days">0</strong>days of you, and I am still counting</p>
+    <div class="nav">
+      <button class="back" type="button" data-go="0">Back</button>
+      <button class="btn btn-primary" type="button" data-go="2">Read my letter ♥</button>
+    </div>
+  </section>
+
+  <section class="letter" id="letter">
+    <p class="eyebrow">A letter</p>
+    <h2>My dear Pratiksha,</h2>
+    <p>I did not plan any of this. On the 2nd of August I was just talking to a girl in India. Then one day I noticed that my whole day had quietly rearranged itself around your messages.</p>
+    <p>You have become my favourite notification, my favourite voice, and the person I want to tell everything to first. Good news, bad news, what I ate, the silly thing that happened at work. If it happened, I want you to know about it.</p>
+    <p>You make a grey London day feel warm. You make the distance feel smaller than it has any right to be. I love the way you laugh, the way you care, and the way you call me Pumpkin like it has always been my name.</p>
+    <p>I love you. Truly, fully, a little helplessly. You are so special to me that the ordinary words do not quite fit anymore.</p>
+    <p>So I do not want to be just the guy you talk to. I want to be yours, properly. I want you to be my girlfriend and my partner, the one I build things with, across the miles for now and side by side one day.</p>
+    <p>Which brings me to a question.</p>
+    <p class="sign">Forever yours,<br>your Pumpkin</p>
+    <p class="to">For you, Pratiksha, with all my heart.</p>
+    <div class="nav">
+      <button class="back" type="button" data-go="1">Back</button>
+      <button class="btn btn-primary" type="button" data-go="3">My question ♥</button>
+    </div>
+  </section>
+
+  <section class="ask" id="ask">
+    <p class="eyebrow">The question</p>
+    <h2>Pratiksha, will you be my girlfriend?</h2>
+    <div class="arena" id="arena">
+      <button class="btn btn-primary" id="yes" type="button">Yes ♥</button>
+      <button class="btn" id="no" type="button">No</button>
+    </div>
+    <p class="tease" id="tease" aria-live="polite">Choose wisely. One of these buttons is very shy.</p>
+  </section>
+
+  <section class="yay" id="yay" tabindex="-1">
+    <p class="hearts-row" aria-hidden="true">♥♥♥</p>
+    <h2>You said yes!</h2>
+    <p class="big">I love you… Thank you for saying yes. From London to India, you’re mine now ❤️</p>
+    <p>Pratiksha, you just made me the happiest guy in any time zone. Now call me. I need to hear you say it.</p>
+    <p class="sign">your Pumpkin</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* one screen at a time */
+  var bar = document.getElementById('bar');
+  var screens = ['hello', 'story', 'letter', 'ask', 'yay'];
+  function go(i) {
+    screens.forEach(function (id, n) { document.getElementById(id).classList.toggle('active', n === i); });
+    bar.style.width = [8, 35, 62, 88, 100][i] + '%';
+    window.scrollTo(0, 0);
+  }
+  go(0);
+  document.querySelectorAll('[data-go]').forEach(function (b) {
+    b.addEventListener('click', function () { go(Number(b.getAttribute('data-go'))); });
+  });
+
+  /* floating hearts */
+  if (!reduce) {
+    var sky = document.getElementById('sky');
+    for (var i = 0; i < 16; i++) {
+      var s = document.createElement('span');
+      s.textContent = '♥';
+      s.style.left = (Math.random() * 100) + '%';
+      s.style.fontSize = (12 + Math.random() * 20) + 'px';
+      s.style.animationDuration = (11 + Math.random() * 12) + 's';
+      s.style.animationDelay = (-Math.random() * 20) + 's';
+      s.style.setProperty('--drift', (Math.random() * 120 - 60) + 'px');
+      if (i % 3 === 0) s.style.color = '#C7A257';
+      if (i % 4 === 1) s.style.color = '#B79BE0';
+      sky.appendChild(s);
+    }
+  }
+
+  /* clocks and day counter */
+  function fmt(tz) {
+    try { return new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: tz }).format(new Date()); }
+    catch (e) { return '--:--'; }
+  }
+  function tick() {
+    document.getElementById('t-lon').textContent = fmt('Europe/London');
+    document.getElementById('t-ind').textContent = fmt('Asia/Kolkata');
+    var start = Date.UTC(2026, 7, 2);
+    var n = new Date();
+    var today = Date.UTC(n.getFullYear(), n.getMonth(), n.getDate());
+    document.getElementById('days').textContent = Math.max(0, Math.round((today - start) / 86400000));
+  }
+  tick(); setInterval(tick, 20000);
+
+  /* soft music box, made in the browser */
+  var musicBtn = document.getElementById('music'), ctx = null, master = null, timer = null, step = 0, playing = false;
+  var chords = [[261.63, 329.63, 392.00, 523.25], [196.00, 293.66, 392.00, 493.88], [220.00, 261.63, 329.63, 440.00], [174.61, 261.63, 349.23, 440.00]];
+  var pattern = [0, 2, 1, 3, 2, 1, 3, 2];
+  function pluck(freq, when) {
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = freq * 2;
+    g.gain.setValueAtTime(0.0001, when);
+    g.gain.exponentialRampToValueAtTime(0.22, when + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, when + 1.6);
+    o.connect(g); g.connect(master); o.start(when); o.stop(when + 1.7);
+  }
+  function schedule() {
+    var chord = chords[Math.floor(step / 8) % chords.length];
+    pluck(chord[pattern[step % 8]], ctx.currentTime + 0.05);
+    if (step % 8 === 0) pluck(chord[0] / 2, ctx.currentTime + 0.05);
+    step++;
+  }
+  musicBtn.addEventListener('click', function () {
+    try {
+      if (!ctx) {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        ctx = new AC(); master = ctx.createGain(); master.gain.value = 0.5; master.connect(ctx.destination);
+      }
+      if (playing) {
+        clearInterval(timer); playing = false; ctx.suspend();
+        musicBtn.textContent = '♪ Play soft music';
+      } else {
+        ctx.resume(); schedule(); timer = setInterval(schedule, 380); playing = true;
+        musicBtn.textContent = '❚❚ Pause music';
+      }
+      musicBtn.setAttribute('aria-pressed', String(playing));
+    } catch (e) {
+      musicBtn.textContent = 'Music is not available here';
+      musicBtn.disabled = true;
+    }
+  });
+
+  /* the shy No button */
+  var arena = document.getElementById('arena'), yes = document.getElementById('yes'), no = document.getElementById('no'), tease = document.getElementById('tease');
+  var dodges = 0, lastDodge = 0, surrendered = false;
+  var lines = [
+    'Oops. It slipped.',
+    'Are you sure? Try again.',
+    'It really does not want to be clicked.',
+    'I am watching, you know.',
+    'That button is getting nervous.',
+    'Look how big and lovely the Yes button is.',
+    'Still chasing it? You are adorable.',
+    'It is getting smaller. Take the hint.',
+    'Okay, the No button gives up.'
+  ];
+  var labels = ['No', 'No?', 'Nope', 'Hmm', 'Wait', 'Eek!', 'Nooo', 'help', '…'];
+
+  function dodge(px, py) {
+    if (surrendered) return;
+    var now = Date.now();
+    if (now - lastDodge < 180) return;
+    lastDodge = now;
+    var a = arena.getBoundingClientRect();
+    if (no.style.position !== 'absolute') {
+      var r = no.getBoundingClientRect();
+      no.style.left = (r.left - a.left) + 'px';
+      no.style.top = (r.top - a.top) + 'px';
+      no.style.position = 'absolute';
+      no.getBoundingClientRect();
+    }
+    dodges++;
+    if (dodges >= lines.length) { surrender(); return; }
+    no.textContent = labels[Math.min(dodges, labels.length - 1)];
+    var scale = Math.max(0.55, 1 - dodges * 0.06);
+    var w = no.offsetWidth, h = no.offsetHeight;
+    a = arena.getBoundingClientRect();
+    var y = yes.getBoundingClientRect(), best = null, bestD = -1;
+    for (var i = 0; i < 40; i++) {
+      var x = 6 + Math.random() * Math.max(1, a.width - w - 12);
+      var t = 6 + Math.random() * Math.max(1, a.height - h - 12);
+      var L = a.left + x, T = a.top + t;
+      var hitsYes = !(L + w < y.left - 14 || L > y.right + 14 || T + h < y.top - 14 || T > y.bottom + 14);
+      if (hitsYes) continue;
+      var d = px == null ? 999 : Math.hypot(L + w / 2 - px, T + h / 2 - py);
+      if (d > bestD) { bestD = d; best = [x, t]; }
+      if (d > 150) break;
+    }
+    if (best) { no.style.left = best[0] + 'px'; no.style.top = best[1] + 'px'; }
+    no.style.transform = 'scale(' + scale + ') rotate(' + (Math.random() * 24 - 12) + 'deg)';
+    yes.style.transform = 'scale(' + Math.min(1.35, 1 + dodges * 0.045) + ')';
+    tease.textContent = lines[dodges - 1];
+  }
+  function surrender() {
+    surrendered = true;
+    no.textContent = 'Fine. Yes ♥';
+    no.style.cssText = 'background:var(--rose);color:#fff;border-color:var(--rose);font-size:18px;padding:16px 30px;';
+    lastDodge = Date.now();
+    no.style.transform = 'none';
+    no.style.position = 'static';
+    tease.textContent = lines[lines.length - 1];
+  }
+  arena.addEventListener('pointermove', function (e) {
+    if (surrendered) return;
+    var r = no.getBoundingClientRect();
+    var d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
+    if (d < 85) dodge(e.clientX, e.clientY);
+  });
+  no.addEventListener('pointerdown', function (e) {
+    if (surrendered) return;
+    e.preventDefault(); dodge(e.clientX, e.clientY);
+  });
+  no.addEventListener('focus', function () { if (!surrendered) dodge(null, null); });
+  no.addEventListener('click', function (e) {
+    if (surrendered) { if (Date.now() - lastDodge > 500) sayYes(); return; }
+    e.preventDefault(); dodge(null, null);
+  });
+  yes.addEventListener('click', sayYes);
+
+  /* yes! */
+  function sayYes() {
+    go(4);
+    try { document.getElementById('yay').focus({ preventScroll: true }); } catch (e) {}
+    if (!reduce) confetti();
+  }
+  function confetti() {
+    var c = document.getElementById('confetti'), g = c.getContext('2d');
+    var W = c.width = window.innerWidth, H = c.height = window.innerHeight;
+    var colors = ['#C94F74', '#F3A9BE', '#B79BE0', '#C7A257', '#FFFFFF', '#E86A92'];
+    var parts = [];
+    for (var i = 0; i < 170; i++) {
+      parts.push({ x: Math.random() * W, y: -20 - Math.random() * H * 0.9, vx: Math.random() * 2 - 1, vy: 2 + Math.random() * 3.5, s: 7 + Math.random() * 11, r: Math.random() * 6.28, vr: Math.random() * 0.2 - 0.1, c: colors[i % colors.length], heart: i % 3 === 0 });
+    }
+    var start = performance.now();
+    function frame(t) {
+      var el = t - start;
+      g.clearRect(0, 0, W, H);
+      parts.forEach(function (p) {
+        p.x += p.vx + Math.sin((el + p.s * 90) / 500) * 0.8; p.y += p.vy; p.r += p.vr;
+        if (p.y > H + 30 && el < 6500) { p.y = -20; p.x = Math.random() * W; }
+        g.save(); g.translate(p.x, p.y); g.rotate(p.r); g.fillStyle = p.c;
+        if (p.heart) { g.font = (p.s * 1.9) + 'px serif'; g.fillText('♥', -p.s / 2, p.s / 2); }
+        else { g.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); }
+        g.restore();
+      });
+      if (el < 10000) requestAnimationFrame(frame); else g.clearRect(0, 0, W, H);
+    }
+    requestAnimationFrame(frame);
+  }
+})();
+</script>
+</body>
+</html>
