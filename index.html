@@ -136,8 +136,8 @@
     <h1>Hi, Pratiksha</h1>
     <p class="lede">I made this little page just for you, from 4,000-something miles away. Take your time. I have a question for you at the end.</p>
     <div class="row">
-      <button class="btn btn-primary" type="button" data-go="1">Begin ♥</button>
       <button class="btn btn-ghost" id="music" type="button" aria-pressed="false">♪ Play soft music</button>
+      <button class="btn btn-primary" type="button" data-go="1">Begin ♥</button>
     </div>
     <p class="note">It’s me, your guy in London, who fell for you all the way in India.</p>
   </section>
@@ -244,35 +244,59 @@
   }
   tick(); setInterval(tick, 20000);
 
-  /* soft music box, made in the browser */
+  /* dreamy music box — gentle arpeggiated piano feel */
   var musicBtn = document.getElementById('music'), ctx = null, master = null, timer = null, step = 0, playing = false;
-  var chords = [[261.63, 329.63, 392.00, 523.25], [196.00, 293.66, 392.00, 493.88], [220.00, 261.63, 329.63, 440.00], [174.61, 261.63, 349.23, 440.00]];
-  var pattern = [0, 2, 1, 3, 2, 1, 3, 2];
-  function pluck(freq, when) {
-    var o = ctx.createOscillator(), g = ctx.createGain();
-    o.type = 'sine'; o.frequency.value = freq * 2;
+  /* romantic chord progression: Cmaj7 → Am7 → Fmaj7 → G → Em7 → Am → Dm7 → G7 */
+  var chords = [
+    [261.63, 329.63, 392.00, 493.88],
+    [220.00, 261.63, 329.63, 392.00],
+    [174.61, 261.63, 329.63, 440.00],
+    [196.00, 246.94, 293.66, 392.00],
+    [164.81, 246.94, 293.66, 392.00],
+    [220.00, 261.63, 329.63, 440.00],
+    [146.83, 220.00, 261.63, 349.23],
+    [196.00, 246.94, 293.66, 349.23]
+  ];
+  /* arpeggio picking pattern — gentle upward sweep then soft return */
+  var pattern = [0, 1, 2, 3, 2, 1, 3, 2];
+  function softNote(freq, when, dur, vol) {
+    /* layered sine + triangle for warmth */
+    var o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain();
+    o1.type = 'sine'; o1.frequency.value = freq;
+    o2.type = 'triangle'; o2.frequency.value = freq; o2.detune.value = 3;
     g.gain.setValueAtTime(0.0001, when);
-    g.gain.exponentialRampToValueAtTime(0.22, when + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, when + 1.6);
-    o.connect(g); g.connect(master); o.start(when); o.stop(when + 1.7);
+    g.gain.exponentialRampToValueAtTime(vol, when + 0.015);
+    g.gain.exponentialRampToValueAtTime(vol * 0.6, when + dur * 0.4);
+    g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+    o1.connect(g); o2.connect(g); g.connect(master);
+    o1.start(when); o1.stop(when + dur + 0.05);
+    o2.start(when); o2.stop(when + dur + 0.05);
   }
   function schedule() {
-    var chord = chords[Math.floor(step / 8) % chords.length];
-    pluck(chord[pattern[step % 8]], ctx.currentTime + 0.05);
-    if (step % 8 === 0) pluck(chord[0] / 2, ctx.currentTime + 0.05);
+    var ci = Math.floor(step / 8) % chords.length;
+    var chord = chords[ci];
+    var note = chord[pattern[step % 8]];
+    var t = ctx.currentTime + 0.05;
+    /* main note — one octave up for sparkle */
+    softNote(note * 2, t, 1.8, 0.14);
+    /* soft bass on beat 1 and 5 of each bar */
+    if (step % 8 === 0) softNote(chord[0] * 0.5, t, 2.5, 0.09);
+    if (step % 8 === 4) softNote(chord[1] * 0.5, t, 2.0, 0.06);
+    /* occasional high sparkle on beat 3 */
+    if (step % 8 === 2 && ci % 2 === 0) softNote(note * 4, t, 1.2, 0.04);
     step++;
   }
   musicBtn.addEventListener('click', function () {
     try {
       if (!ctx) {
         var AC = window.AudioContext || window.webkitAudioContext;
-        ctx = new AC(); master = ctx.createGain(); master.gain.value = 0.5; master.connect(ctx.destination);
+        ctx = new AC(); master = ctx.createGain(); master.gain.value = 0.45; master.connect(ctx.destination);
       }
       if (playing) {
         clearInterval(timer); playing = false; ctx.suspend();
         musicBtn.textContent = '♪ Play soft music';
       } else {
-        ctx.resume(); schedule(); timer = setInterval(schedule, 380); playing = true;
+        ctx.resume(); schedule(); timer = setInterval(schedule, 420); playing = true;
         musicBtn.textContent = '❚❚ Pause music';
       }
       musicBtn.setAttribute('aria-pressed', String(playing));
